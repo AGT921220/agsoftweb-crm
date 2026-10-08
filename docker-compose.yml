@@ -16,7 +16,6 @@ services:
       - "${PORT_NGINX_SSL:-8443}:443"
     environment:
       NGINX_SSL_PORT: ${PORT_NGINX_SSL:-8443}
-    entrypoint: ["/bin/sh", "/var/www/html/docker/nginx/entrypoint.sh"]
     volumes:
       - ./:/var/www/html
       - ./docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
