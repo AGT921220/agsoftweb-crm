@@ -14,7 +14,7 @@ docker compose exec php composer install
 docker compose exec php php artisan migrate --seed
 ```
 
-La aplicación queda en el puerto `PORT_NGINX` (8090 si no lo cambias). phpMyAdmin usa `PORT_PHPMYADMIN` (8091). MySQL en el host usa `PORT_MYSQL` (4310) y Redis `PORT_REDIS` (6379).
+La aplicación queda en `https://localhost:8443` (`PORT_NGINX_SSL`). El puerto `PORT_NGINX` (8090) solo redirige a HTTPS. El certificado local se genera solo en `docker/nginx/certs` la primera vez que arranca Nginx. phpMyAdmin usa `PORT_PHPMYADMIN` (8091). MySQL en el host usa `PORT_MYSQL` (4310) y Redis `PORT_REDIS` (6379).
 
 El acceso es por nickname. El seeder deja el usuario `admin` con contraseña `admin`, y esa misma contraseña en el resto de usuarios.
 
