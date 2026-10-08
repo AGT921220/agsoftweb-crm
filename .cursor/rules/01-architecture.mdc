@@ -1,0 +1,15 @@
+---
+description: Capas del CRM y responsabilidad de cada una
+globs: app/**/*.php
+alwaysApply: false
+---
+
+# Arquitectura
+
+- HTTP en `app/Http/Controllers`. Un recurso, un controlador.
+- Negocio en `app/Features/{Quotations,PurchaseOrders,Dashboard,Shared}/Application`.
+- Validación en FormRequest. Las reglas compartidas están en `QuotationRules` y `PurchaseOrderRules`.
+- Eloquent directo. Sin repositorios.
+- Errores de negocio: `CrmRuleException`. El render en `bootstrap/app.php` vuelve atrás con flash `error`.
+- Operaciones que escriben folio, estado, versión, conversión o entrega van dentro de `DB::transaction`.
+- Folios: `NextFolio` solo dentro de una transacción.

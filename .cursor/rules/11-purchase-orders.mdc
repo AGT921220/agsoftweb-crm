@@ -1,0 +1,16 @@
+---
+description: Órdenes de compra y entregas
+globs: app/Features/PurchaseOrders/**/*.php,app/Http/Controllers/PurchaseOrderController.php,app/Models/PurchaseOrder*.php,resources/views/purchase-orders/**/*.blade.php
+alwaysApply: false
+---
+
+# Órdenes de compra
+
+Referencia: `CreatePurchaseOrder`, `UpdatePurchaseOrder`, `ChangePurchaseOrderStatus`, `RegisterDelivery`.
+
+- Folio `OC-000001`. Una orden directa nace en borrador. Una convertida nace en pendiente de confirmación.
+- Editable solo en borrador y pendiente de confirmación.
+- Entregas solo en confirmada, en proceso o parcialmente entregada.
+- `quantity_delivered` no puede superar `quantity`. Al cubrir todo, el estado pasa a completada. Si queda pendiente, a parcialmente entregada.
+- Completar a mano exige que no queden cantidades pendientes.
+- Cancelar exige comentario. Una orden cancelada no recibe entregas.

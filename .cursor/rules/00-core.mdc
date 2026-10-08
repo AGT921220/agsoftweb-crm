@@ -1,0 +1,47 @@
+---
+description: Procedimiento y límites del CRM de cotizaciones y órdenes de compra
+alwaysApply: true
+---
+
+# Core
+
+El repositorio es la fuente de verdad. El código que cumple estas reglas gana sobre un patrón genérico de Laravel. El esqueleto (welcome, Boost) no es plantilla.
+
+## Antes de implementar
+
+1. Identifica el módulo: cotizaciones, órdenes de compra, dashboard o clientes.
+2. Lee la regla de ese módulo en `.cursor/rules`.
+3. Busca el caso de uso equivalente en `app/Features` antes de crear uno nuevo.
+4. Cambio mínimo. Sin columnas ni estados inventados.
+
+## Dónde vive qué
+
+| Qué | Dónde |
+| --- | --- |
+| Casos de uso | `app/Features/{Modulo}/Application` |
+| HTTP | `app/Http/Controllers` |
+| Validación | `app/Http/Requests` |
+| Permisos | `Permission`, `RolePermissions`, `PermissionSeeder`, Policies |
+| Persistencia | Eloquent en `app/Models` |
+| Vistas | `resources/views` |
+| Vencimiento | `crm:expire-quotations` y `routes/console.php` |
+| Docker | `docker-compose.yml`, `Dockerfile`, `docker/` |
+
+## Estilo
+
+- Código simple. Sin repositorios, Resources ni capas extra.
+- Evita `else`. Retorno temprano y `match`.
+- El controlador no posee el negocio.
+- Una clase de Application, un caso de uso.
+- Importes con `App\Support\Money`. No sumes MXN y USD.
+- No edites cotizaciones aprobadas, rechazadas, vencidas o canceladas.
+- No borres histórico.
+- Actualiza `AGENTS.md`, la regla del módulo y `docs/AI_*` solo si cambia arquitectura, dominio, permisos o colas.
+
+## No hacer
+
+- Marketing, inventario, facturación, contabilidad.
+- Tailwind, React, Vue, Livewire o Inertia en el panel.
+- `env()` en `app/`.
+- `migrate:fresh` sin petición explícita.
+- Secretos en documentación.

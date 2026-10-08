@@ -1,0 +1,15 @@
+---
+description: Tablas, folios, importes e histórico
+globs: database/**/*.php,app/Models/**/*.php
+alwaysApply: false
+---
+
+# Persistencia
+
+- Migración de dominio: `database/migrations/2026_10_08_120000_create_crm_tables.php`.
+- Importes `decimal(15,2)`. Cantidades y precios unitarios `decimal(15,4)`.
+- `quotations` y `purchase_orders` usan soft deletes. El histórico no.
+- `folio` es único. `sequence_number` + `version_number` también es único en cotizaciones.
+- `purchase_orders.quotation_id` es único y nullable.
+- Seguimientos, actividades y adjuntos son polimórficos. El mapa está en `AppServiceProvider`: `quotation`, `purchase_order`, `user`.
+- No borres `activity_logs`, `quotation_versions` ni entregas al editar.

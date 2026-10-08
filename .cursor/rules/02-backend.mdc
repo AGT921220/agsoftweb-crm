@@ -1,0 +1,15 @@
+---
+description: Estilo de los casos de uso y controladores
+globs: app/**/*.php
+alwaysApply: false
+---
+
+# Backend
+
+- Evita `else`. Si el estado no permite la acción, lanza `CrmRuleException` y regresa.
+- No mezcles dos casos de uso en la misma clase.
+- No recalcules una orden convertida a partir de la cotización: la orden ya tiene su copia.
+- Compara transiciones con `QuotationStatus::transitions()` y `PurchaseOrderStatus::transitions()`.
+- El cálculo de líneas está en `CalculateLine` y `CalculateDocumentTotals`.
+- Al actualizar conceptos, registra `prices_changed` si cambió la firma de las líneas y `terms_changed` si cambiaron las condiciones.
+- Un seguimiento usa `AddFollowUp` tanto para cotizaciones como para órdenes.

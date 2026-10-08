@@ -1,0 +1,16 @@
+---
+description: Roles y policies del CRM
+globs: app/Policies/**/*.php,app/Enums/Permission.php,app/Enums/Role.php,app/Support/RolePermissions.php
+alwaysApply: false
+---
+
+# Permisos
+
+- Roles: `admin`, `sales`, `operations` en `users.role` y en Spatie.
+- `RolePermissions` define el mapa. `PermissionSeeder` lo escribe en `spatie/laravel-permission`.
+- Al guardar un usuario, `User` sincroniza el rol de Spatie con `users.role`.
+- La comprobación es `$user->hasPermission()`, que consulta el permiso de Spatie.
+- Aprobar una cotización exige `quotations.approve`. Cancelarla exige `quotations.cancel`.
+- Confirmar, procesar o completar una orden exige `purchase_orders.confirm`. Cancelarla exige `purchase_orders.cancel`.
+- Registrar una entrega exige `purchase_orders.update` (`PurchaseOrderPolicy::deliver`).
+- No agregues un permiso nuevo si el rol ya cubre la acción con uno existente. Si lo agregas, actualiza el enum, `RolePermissions` y vuelve a correr `PermissionSeeder`.

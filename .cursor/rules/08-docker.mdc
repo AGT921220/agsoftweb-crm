@@ -1,0 +1,16 @@
+---
+description: Stack Docker de desarrollo del CRM
+globs: docker/**,Dockerfile,docker-compose.yml
+alwaysApply: false
+---
+
+# Docker
+
+- El arranque local es `docker compose up -d --build`. Nginx publica el puerto `PORT_NGINX` (8090 por defecto).
+- Servicios: `nginx`, `php` (FPM 8.4), `horizon`, `scheduler`, `mysql` 8.4, `redis` 8, `phpmyadmin`.
+- Contenedores con sufijo `-crm`. No reutilices nombres `*-ban` ni el puerto 8080: ese stack ya está ocupado.
+- Dentro de la red, MySQL es el host `mysql` y Redis es el host `redis`. Esos valores viven en `.env`.
+- `horizon` ejecuta `php artisan horizon`. `scheduler` ejecuta `php artisan schedule:work` (vence cotizaciones).
+- Las pruebas siguen en SQLite en memoria (`phpunit.xml`). No las apuntes a MySQL.
+- Xdebug solo se instala en la imagen de `php` (`INSTALL_XDEBUG`). Horizon y scheduler lo dejan en `false`.
+- No pongas secretos nuevos en la documentación. Las credenciales locales están en `docker-compose.yml` y `.env.example`.

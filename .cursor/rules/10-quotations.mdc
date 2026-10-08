@@ -1,0 +1,17 @@
+---
+description: Cotizaciones, versiones, estados y conversión
+globs: app/Features/Quotations/**/*.php,app/Http/Controllers/QuotationController.php,app/Models/Quotation*.php,resources/views/quotations/**/*.blade.php
+alwaysApply: false
+---
+
+# Cotizaciones
+
+Referencia: `CreateQuotation`, `UpdateQuotation`, `ChangeQuotationStatus`, `CreateQuotationVersion`, `ConvertQuotationToPurchaseOrder`.
+
+- Folio `COT-000001`. La versión 2 del mismo consecutivo es `COT-000001-V2`.
+- Editable en borrador, enviada, en seguimiento y en negociación.
+- Nueva versión desde enviada, seguimiento, negociación, aprobada o vencida. No si ya hay un borrador en la cadena.
+- Al aprobar y al versionar se guarda `quotation_versions.snapshot`.
+- Conversión solo desde una cotización aprobada, y solo si la cadena no tiene orden.
+- Cancelar o rechazar exige comentario.
+- `ExpireQuotations` pasa a vencida las enviadas, en seguimiento o en negociación con `expires_on` anterior a hoy.

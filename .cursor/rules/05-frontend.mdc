@@ -1,0 +1,15 @@
+---
+description: Blade, Tabler y captura de conceptos
+globs: resources/views/**/*.blade.php,public/js/**/*.js
+alwaysApply: false
+---
+
+# Frontend
+
+- Layout: `resources/views/layouts/app.blade.php`. Tabler y sus iconos por CDN. Paginación Bootstrap 5 (`Paginator::useBootstrapFive`).
+- No uses Tailwind ni otro framework de UI en el panel.
+- Formularios de conceptos: `partials/line-items.blade.php` y `public/js/line-items.js`.
+- El total de pantalla es orientativo. El servidor vuelve a calcular.
+- Listados: card, filtros GET, tabla responsive y paginación. Badges con `$status->badge()`.
+- Detalle con pestañas Bootstrap. PDF en vistas `quotations/pdf.blade.php` y `purchase-orders/pdf.blade.php`, con CSS embebido.
+- Gráficas del dashboard con Chart.js. Una serie por moneda.

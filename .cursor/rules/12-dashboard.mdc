@@ -1,0 +1,15 @@
+---
+description: Métricas del dashboard separadas por moneda
+globs: app/Features/Dashboard/**/*.php,app/Http/Controllers/DashboardController.php,resources/views/dashboard/**/*.blade.php
+alwaysApply: false
+---
+
+# Dashboard
+
+Referencia: `CrmMetrics`.
+
+- Filtros: fechas, cliente, responsable, estado de cotización y estado de orden.
+- Agrega con `GROUP BY currency, status`. No sumes monedas.
+- La conversión es órdenes generadas sobre cotizaciones aprobadas, por moneda.
+- El mes usa `strftime` en SQLite y `DATE_FORMAT` en MySQL.
+- Seguimientos pendientes y vencidos salen de `next_follow_up_at` en cotizaciones abiertas y órdenes no canceladas ni completadas.
