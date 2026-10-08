@@ -27,8 +27,6 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::useBootstrapFive();
 
-        if ($this->app->environment('local') && str_starts_with((string) config('app.url'), 'https://')) {
-            URL::forceScheme('https');
-        }
+        URL::forceScheme('https');
     }
 }

@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Docker
 
-- El arranque local es `docker compose up -d --build`. La app se sirve por HTTPS en `PORT_NGINX_SSL` (8443). `PORT_NGINX` (8090) solo redirige. El certificado ya está en `docker/nginx/certs`.
+- El arranque local es `docker compose up -d --build`. Nginx publica el puerto `PORT_NGINX` (8090 por defecto).
 - Servicios: `nginx`, `php` (FPM 8.4), `horizon`, `scheduler`, `mysql` 8.4, `redis` 8, `phpmyadmin`.
 - Contenedores con sufijo `-crm`. No reutilices nombres `*-ban` ni el puerto 8080: ese stack ya está ocupado.
 - Dentro de la red, MySQL es el host `mysql` y Redis es el host `redis`. Esos valores viven en `.env`.

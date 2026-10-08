@@ -34,7 +34,7 @@ El panel usa Tabler y Bootstrap 5. No hay Tailwind de producto ni bundler obliga
 
 ## ADR-010 — Docker para el entorno local
 
-Nginx, PHP-FPM 8.4, Horizon, el scheduler, MySQL 8.4, Redis y phpMyAdmin viven en `docker-compose.yml`. Los nombres de contenedor usan el sufijo `-crm`. El CRM se publica por HTTPS en el puerto 8443; el 8090 redirige. El 443 y el 8080 ya los usa otro stack de esta máquina. Nginx termina TLS y PHP recibe `HTTPS=on`. En local, si `APP_URL` empieza por `https://`, Laravel fuerza ese esquema. Las pruebas no entran a esos servicios.
+Nginx, PHP-FPM 8.4, Horizon, el scheduler, MySQL 8.4, Redis y phpMyAdmin viven en `docker-compose.yml`. Los nombres de contenedor usan el sufijo `-crm` y el puerto web por defecto es 8090, porque 8080 ya lo usa otro stack de esta máquina. La aplicación habla con los hosts `mysql` y `redis`. Las URLs generadas van en HTTPS con `URL::forceScheme`. Las pruebas no entran a esos servicios.
 
 ## ADR-009 — Folios con bloqueo
 
