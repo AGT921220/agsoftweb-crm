@@ -18,12 +18,8 @@ final class QuotationRules
     public static function fields(): array
     {
         return [
-            'client_id' => ['nullable', 'exists:clients,id'],
-            'client_name' => ['required', 'string', 'max:255'],
-            'legal_name' => ['nullable', 'string', 'max:255'],
-            'contact_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:40'],
+            'client_id' => ['required', 'integer', 'exists:clients,id'],
+            'contact_id' => ['required', 'integer', Rule::exists('contacts', 'id')->where(fn ($query) => $query->where('client_id', request()->input('client_id')))],
             'issued_on' => ['required', 'date'],
             'expires_on' => ['required', 'date', 'after_or_equal:issued_on'],
             'user_id' => ['required', 'exists:users,id'],
@@ -35,7 +31,7 @@ final class QuotationRules
             'client_notes' => ['nullable', 'string', 'max:5000'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.sku' => ['nullable', 'string', 'max:80'],
-            'items.*.description' => ['required', 'string', 'max:1000'],
+            'items.*.description' => ['required', 'string'],
             'items.*.quantity' => ['required', 'numeric', 'gt:0'],
             'items.*.unit' => ['required', 'string', 'max:40'],
             'items.*.unit_price' => ['required', 'numeric', 'gte:0'],
@@ -51,11 +47,8 @@ final class QuotationRules
     public static function attributes(): array
     {
         return [
-            'client_name' => 'cliente',
-            'legal_name' => 'razón social',
-            'contact_name' => 'contacto',
-            'email' => 'correo electrónico',
-            'phone' => 'teléfono',
+            'client_id' => 'cliente',
+            'contact_id' => 'contacto',
             'issued_on' => 'fecha de creación',
             'expires_on' => 'fecha de vencimiento',
             'user_id' => 'responsable',

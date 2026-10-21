@@ -32,7 +32,7 @@ final class CreateQuotation
             $number = ($this->folios)('COT');
             $totals = ($this->totals)($data['items']);
 
-            $quotation = Quotation::query()->create(array_merge(PartyAttributes::from($data), [
+            $quotation = Quotation::query()->create(array_merge(PartyAttributes::capture((int) $data['client_id'], (int) $data['contact_id']), [
                 'folio' => Folio::format('COT', $number),
                 'sequence_number' => $number,
                 'version_number' => 1,

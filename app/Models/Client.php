@@ -15,18 +15,20 @@ class Client extends Model
     protected $fillable = [
         'name',
         'legal_name',
-        'contact_name',
-        'email',
-        'phone',
     ];
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class)->orderBy('first_name');
+    }
 
     public function quotations(): HasMany
     {
         return $this->hasMany(Quotation::class);
     }
 
-    public function purchaseOrders(): HasMany
+    public function orders(): HasMany
     {
-        return $this->hasMany(PurchaseOrder::class);
+        return $this->hasMany(Order::class);
     }
 }

@@ -30,7 +30,7 @@ enum ActivityAction: string
             self::FollowUp => 'Seguimiento',
             self::VersionCreated => 'Nueva versión',
             self::Duplicated => 'Duplicado',
-            self::Converted => 'Conversión a orden de compra',
+            self::Converted => 'Conversión a pedido',
             self::AttachmentAdded => 'Documento adjunto',
             self::AttachmentRemoved => 'Documento eliminado',
             self::DeliveryRegistered => 'Entrega registrada',

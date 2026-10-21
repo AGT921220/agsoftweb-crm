@@ -12,19 +12,24 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PermissionSeeder::class);
 
-        User::query()->updateOrCreate(
-            ['email' => 'admin@agsoftweb.local'],
+        User::query()->firstOrCreate(
+            ['nickname' => 'admin'],
             [
                 'name' => 'Administrador',
-                'nickname' => 'admin',
+                'email' => 'admin@agsoftweb.local',
                 'password' => 'admin',
                 'role' => Role::Admin,
             ],
         );
 
-        User::query()->each(function (User $user): void {
-            $user->password = 'admin';
-            $user->save();
-        });
+        User::query()->firstOrCreate(
+            ['nickname' => 'superadmin'],
+            [
+                'name' => 'Superadmin',
+                'email' => 'superadmin@agsoftweb.local',
+                'password' => 'admin',
+                'role' => Role::SuperAdmin,
+            ],
+        );
     }
 }

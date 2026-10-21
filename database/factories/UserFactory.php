@@ -23,7 +23,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => 'admin',
-            'role' => Role::Sales,
+            'role' => Role::Vendedor,
             'remember_token' => Str::random(10),
         ];
     }

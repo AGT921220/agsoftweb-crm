@@ -7,8 +7,8 @@ alwaysApply: false
 # Arquitectura
 
 - HTTP en `app/Http/Controllers`. Un recurso, un controlador.
-- Negocio en `app/Features/{Quotations,PurchaseOrders,Dashboard,Shared}/Application`.
-- Validación en FormRequest. Las reglas compartidas están en `QuotationRules` y `PurchaseOrderRules`.
+- Negocio en `app/Features/{Quotations,Orders,Clients,Dashboard,Access,Shared}/Application`.
+- Validación en FormRequest. Las reglas compartidas están en `QuotationRules` y `OrderRules`.
 - Eloquent directo. Sin repositorios.
 - Errores de negocio: `CrmRuleException`. El render en `bootstrap/app.php` vuelve atrás con flash `error`.
 - Operaciones que escriben folio, estado, versión, conversión o entrega van dentro de `DB::transaction`.

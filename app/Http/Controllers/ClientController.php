@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Features\Clients\Application\SaveClient;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
@@ -17,7 +18,7 @@ class ClientController extends Controller
         $this->authorize('viewAny', Client::class);
 
         return view('clients.index', [
-            'clients' => Client::query()->orderBy('name')->paginate(15),
+            'clients' => Client::query()->withCount('contacts')->orderBy('name')->paginate(15),
         ]);
     }
 
@@ -28,9 +29,9 @@ class ClientController extends Controller
         return view('clients.create');
     }
 
-    public function store(StoreClientRequest $request): RedirectResponse
+    public function store(StoreClientRequest $request, SaveClient $save): RedirectResponse
     {
-        Client::query()->create($request->validated());
+        $save($request->validated());
 
         return redirect()->route('clients.index')->with('success', 'Cliente guardado.');
     }
@@ -38,13 +39,14 @@ class ClientController extends Controller
     public function edit(Client $client): View
     {
         $this->authorize('update', $client);
+        $client->load('contacts');
 
         return view('clients.edit', ['client' => $client]);
     }
 
-    public function update(UpdateClientRequest $request, Client $client): RedirectResponse
+    public function update(UpdateClientRequest $request, Client $client, SaveClient $save): RedirectResponse
     {
-        $client->update($request->validated());
+        $save($request->validated(), $client);
 
         return redirect()->route('clients.index')->with('success', 'Cliente actualizado.');
     }

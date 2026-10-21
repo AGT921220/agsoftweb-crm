@@ -17,9 +17,9 @@ class StoreFollowUpRequest extends FormRequest
             return $this->user()->can('followUp', $quotation);
         }
 
-        $order = $this->route('purchase_order');
+        $order = $this->route('order');
 
-        return $order && $this->user()->can('update', $order);
+        return $order && $this->user()->can('followUp', $order);
     }
 
     /**

@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-md-2">
                     <select class="form-select" name="order_status">
-                        <option value="">Estado de OC</option>
+                        <option value="">Estado del pedido</option>
                         @foreach ($orderStatuses as $status)
                             <option value="{{ $status->value }}" @selected(($filters['order_status'] ?? '') === $status->value)>{{ $status->label() }}</option>
                         @endforeach
@@ -68,9 +68,9 @@
                 'Vencidas' => $bucket['quotations_expired'],
                 'Monto cotizado' => \App\Support\Money::display($bucket['quoted_amount'], $code),
                 'Monto aprobado' => \App\Support\Money::display($bucket['approved_amount'], $code),
-                'OC activas' => $bucket['orders_active'],
-                'OC completadas' => $bucket['orders_completed'],
-                'Monto de órdenes' => \App\Support\Money::display($bucket['orders_amount'], $code),
+                'Pedidos activos' => $bucket['orders_active'],
+                'Pedidos completados' => $bucket['orders_completed'],
+                'Monto de pedidos' => \App\Support\Money::display($bucket['orders_amount'], $code),
                 'Conversión' => $bucket['conversion']['rate'].'%',
             ] as $label => $value)
                 <div class="col-6 col-md-3">
@@ -117,12 +117,12 @@
             new Chart(canvas, { type: 'doughnut', data: { labels, datasets: [{ data: values }] } });
         }
         const conversion = document.createElement('canvas');
-        holder.appendChild(document.createElement('h4')).textContent = 'Conversión a orden de compra';
+        holder.appendChild(document.createElement('h4')).textContent = 'Conversión a pedido';
         holder.appendChild(conversion);
         new Chart(conversion, {
             type: 'doughnut',
             data: {
-                labels: ['Convertidas', 'Aprobadas sin OC'],
+                labels: ['Convertidas', 'Aprobadas sin pedido'],
                 datasets: [{ data: [bucket.conversion.converted, Math.max(bucket.conversion.approved - bucket.conversion.converted, 0)] }],
             },
         });

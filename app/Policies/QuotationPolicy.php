@@ -39,4 +39,37 @@ class QuotationPolicy
     {
         return $user->hasPermission(Permission::QuotationsHistory);
     }
+
+    public function duplicate(User $user, Quotation $quotation): bool
+    {
+        return $user->hasPermission(Permission::QuotationsDuplicate);
+    }
+
+    public function version(User $user, Quotation $quotation): bool
+    {
+        return $user->hasPermission(Permission::QuotationsVersion);
+    }
+
+    public function convert(User $user, Quotation $quotation): bool
+    {
+        return $user->hasPermission(Permission::QuotationsConvert);
+    }
+
+    public function pdf(User $user, Quotation $quotation): bool
+    {
+        return $user->hasPermission(Permission::QuotationsPdf);
+    }
+
+    public function attach(User $user, Quotation $quotation): bool
+    {
+        return $user->hasPermission(Permission::QuotationsAttachments);
+    }
+
+    public function changeStatus(User $user, Quotation $quotation): bool
+    {
+        return $user->hasPermission(Permission::QuotationsUpdate)
+            || $user->hasPermission(Permission::QuotationsApprove)
+            || $user->hasPermission(Permission::QuotationsReject)
+            || $user->hasPermission(Permission::QuotationsCancel);
+    }
 }

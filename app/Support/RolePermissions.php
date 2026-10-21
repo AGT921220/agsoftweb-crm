@@ -14,32 +14,51 @@ final class RolePermissions
      */
     public static function for(Role $role): array
     {
-        if ($role === Role::Admin) {
-            return Permission::cases();
-        }
-
-        if ($role === Role::Sales) {
-            return [
+        return match ($role) {
+            Role::SuperAdmin => Permission::cases(),
+            Role::Admin => array_values(array_filter(
+                Permission::cases(),
+                fn (Permission $permission): bool => ! $permission->managesAccess(),
+            )),
+            Role::Vendedor => [
+                Permission::DashboardView,
+                Permission::ClientsView,
+                Permission::ClientsCreate,
+                Permission::ClientsUpdate,
                 Permission::QuotationsView,
                 Permission::QuotationsCreate,
                 Permission::QuotationsUpdate,
                 Permission::QuotationsApprove,
+                Permission::QuotationsReject,
                 Permission::QuotationsCancel,
                 Permission::QuotationsHistory,
                 Permission::QuotationsFollowUp,
-                Permission::PurchaseOrdersView,
-                Permission::PurchaseOrdersCreate,
-            ];
-        }
-
-        return [
-            Permission::QuotationsView,
-            Permission::QuotationsHistory,
-            Permission::PurchaseOrdersView,
-            Permission::PurchaseOrdersCreate,
-            Permission::PurchaseOrdersUpdate,
-            Permission::PurchaseOrdersConfirm,
-            Permission::PurchaseOrdersCancel,
-        ];
+                Permission::QuotationsDuplicate,
+                Permission::QuotationsVersion,
+                Permission::QuotationsConvert,
+                Permission::QuotationsPdf,
+                Permission::QuotationsAttachments,
+                Permission::OrdersView,
+                Permission::OrdersCreate,
+                Permission::OrdersPdf,
+            ],
+            Role::Facturacion => [
+                Permission::DashboardView,
+                Permission::ClientsView,
+                Permission::QuotationsView,
+                Permission::QuotationsHistory,
+                Permission::QuotationsPdf,
+                Permission::QuotationsAttachments,
+                Permission::OrdersView,
+                Permission::OrdersCreate,
+                Permission::OrdersUpdate,
+                Permission::OrdersConfirm,
+                Permission::OrdersCancel,
+                Permission::OrdersDeliver,
+                Permission::OrdersFollowUp,
+                Permission::OrdersPdf,
+                Permission::OrdersAttachments,
+            ],
+        };
     }
 }

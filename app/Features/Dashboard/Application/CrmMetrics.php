@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Features\Dashboard\Application;
 
 use App\Enums\Currency;
-use App\Enums\PurchaseOrderStatus;
+use App\Enums\OrderStatus;
 use App\Enums\QuotationStatus;
-use App\Models\PurchaseOrder;
+use App\Models\Order;
 use App\Models\Quotation;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,7 +42,7 @@ final class CrmMetrics
 
         $converted = $this->quotations($filters)
             ->where('status', QuotationStatus::Approved->value)
-            ->whereHas('purchaseOrder')
+            ->whereHas('order')
             ->toBase()
             ->selectRaw('currency, COUNT(*) as aggregate')
             ->groupBy('currency')
@@ -80,13 +80,13 @@ final class CrmMetrics
                 'quoted_amount' => $this->sumAmount($quotes),
                 'approved_amount' => $this->sumAmount($quotes->where('status', QuotationStatus::Approved->value)),
                 'orders_active' => $this->countStatuses($orders, [
-                    PurchaseOrderStatus::PendingConfirmation,
-                    PurchaseOrderStatus::Confirmed,
-                    PurchaseOrderStatus::InProgress,
-                    PurchaseOrderStatus::PartiallyDelivered,
+                    OrderStatus::PendingConfirmation,
+                    OrderStatus::Confirmed,
+                    OrderStatus::InProgress,
+                    OrderStatus::PartiallyDelivered,
                 ]),
-                'orders_completed' => $this->countStatuses($orders, [PurchaseOrderStatus::Completed]),
-                'orders_amount' => $this->sumAmount($orders->where('status', '!=', PurchaseOrderStatus::Cancelled->value)),
+                'orders_completed' => $this->countStatuses($orders, [OrderStatus::Completed]),
+                'orders_amount' => $this->sumAmount($orders->where('status', '!=', OrderStatus::Cancelled->value)),
                 'status_counts' => $quotes->mapWithKeys(fn ($row) => [$row->status => (int) $row->aggregate])->all(),
                 'conversion' => [
                     'approved' => $approvedCount,
@@ -121,7 +121,7 @@ final class CrmMetrics
 
     private function orders(array $filters): Builder
     {
-        return PurchaseOrder::query()
+        return Order::query()
             ->when($filters['date_from'] ?? null, fn (Builder $query, string $date) => $query->whereDate('issued_on', '>=', $date))
             ->when($filters['date_to'] ?? null, fn (Builder $query, string $date) => $query->whereDate('issued_on', '<=', $date))
             ->when($filters['client_id'] ?? null, fn (Builder $query, string $id) => $query->where('client_id', $id))
@@ -131,7 +131,7 @@ final class CrmMetrics
 
     /**
      * @param  iterable<int, object>  $rows
-     * @param  list<QuotationStatus|PurchaseOrderStatus>  $statuses
+     * @param  list<QuotationStatus|OrderStatus>  $statuses
      */
     private function countStatuses(iterable $rows, array $statuses): int
     {
@@ -199,9 +199,9 @@ final class CrmMetrics
         return $this->openFollowUps(Quotation::query(), $filters, $overdue, [
             QuotationStatus::Rejected->value,
             QuotationStatus::Cancelled->value,
-        ]) + $this->openFollowUps(PurchaseOrder::query(), $filters, $overdue, [
-            PurchaseOrderStatus::Cancelled->value,
-            PurchaseOrderStatus::Completed->value,
+        ]) + $this->openFollowUps(Order::query(), $filters, $overdue, [
+            OrderStatus::Cancelled->value,
+            OrderStatus::Completed->value,
         ]);
     }
 

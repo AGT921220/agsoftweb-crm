@@ -7,6 +7,6 @@ alwaysApply: false
 # Pruebas
 
 - Feature tests con `RefreshDatabase` y el trait `Tests\CreatesCrmUsers`.
-- Cubre cálculo, folio, transición inválida, seguimiento, versión, conversión única, entrega parcial, tope de cantidad, orden cancelada y permisos.
+- Cubre cálculo, folio, transición inválida, seguimiento, versión, conversión única, entrega parcial, tope de cantidad, pedido cancelado y permisos.
 - `tests/Unit/MoneyTest.php` no levanta Laravel: no uses helpers del framework ahí.
 - Ejecuta `php artisan test`. La suite usa SQLite en memoria (`phpunit.xml`).

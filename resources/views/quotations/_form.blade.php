@@ -13,13 +13,6 @@
             'tax_rate' => $item->tax_rate,
         ])->all();
     }
-    $clientsJson = $clients->mapWithKeys(fn ($client) => [$client->id => [
-        'name' => $client->name,
-        'legal_name' => $client->legal_name,
-        'contact_name' => $client->contact_name,
-        'email' => $client->email,
-        'phone' => $client->phone,
-    ]]);
 @endphp
 
 <form method="POST" action="{{ $document ? route('quotations.update', $document) : route('quotations.store') }}">
@@ -31,35 +24,7 @@
         <div class="card-header"><h3 class="card-title">Información general</h3></div>
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label" for="client_id">Cliente del catálogo</label>
-                    <select class="form-select" id="client_id" name="client_id">
-                        <option value="">Sin catálogo</option>
-                        @foreach ($clients as $client)
-                            <option value="{{ $client->id }}" @selected(old('client_id', $document->client_id ?? '') == $client->id)>{{ $client->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="client_name">Cliente</label>
-                    <input class="form-control" id="client_name" name="client_name" value="{{ old('client_name', $document->client_name ?? '') }}" required>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="legal_name">Razón social</label>
-                    <input class="form-control" id="legal_name" name="legal_name" value="{{ old('legal_name', $document->legal_name ?? '') }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="contact_name">Contacto</label>
-                    <input class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name', $document->contact_name ?? '') }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="email">Correo electrónico</label>
-                    <input class="form-control" id="email" type="email" name="email" value="{{ old('email', $document->email ?? '') }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="phone">Teléfono</label>
-                    <input class="form-control" id="phone" name="phone" value="{{ old('phone', $document->phone ?? '') }}">
-                </div>
+                @include('partials.party-picker')
                 <div class="col-md-3">
                     <label class="form-label" for="issued_on">Fecha</label>
                     <input class="form-control" id="issued_on" type="date" name="issued_on" value="{{ old('issued_on', isset($document) ? $document->issued_on->toDateString() : now()->toDateString()) }}" required>
@@ -107,7 +72,7 @@
             </div>
         </div>
     </div>
-    @include('partials.line-items', ['items' => $items ?? [], 'clientsJson' => $clientsJson])
+    @include('partials.line-items', ['items' => $items ?? []])
     <div class="mt-3">
         <button class="btn btn-primary" type="submit">Guardar cotización</button>
         <a class="btn btn-link" href="{{ $document ? route('quotations.show', $document) : route('quotations.index') }}">Cancelar</a>

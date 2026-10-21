@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Features\PurchaseOrders\Application\PurchaseOrderRules;
+use App\Features\Orders\Application\OrderRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreDeliveryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $order = $this->route('purchase_order');
+        $order = $this->route('order');
 
         return $order && $this->user()->can('deliver', $order);
     }
@@ -21,7 +21,7 @@ class StoreDeliveryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return PurchaseOrderRules::delivery();
+        return OrderRules::delivery();
     }
 
     /**

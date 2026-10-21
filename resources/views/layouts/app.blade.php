@@ -20,15 +20,23 @@
                     </h1>
                     <div class="collapse navbar-collapse" id="navbar-menu">
                         <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}"><span class="nav-link-icon"><i class="ti ti-layout-dashboard"></i></span><span class="nav-link-title">Dashboard</span></a></li>
+                            @if (auth()->user()->hasPermission(\App\Enums\Permission::DashboardView))
+                                <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}"><span class="nav-link-icon"><i class="ti ti-layout-dashboard"></i></span><span class="nav-link-title">Dashboard</span></a></li>
+                            @endif
                             @can('viewAny', App\Models\Quotation::class)
                                 <li class="nav-item"><a class="nav-link" href="{{ route('quotations.index') }}"><span class="nav-link-icon"><i class="ti ti-file-invoice"></i></span><span class="nav-link-title">Cotizaciones</span></a></li>
                             @endcan
-                            @can('viewAny', App\Models\PurchaseOrder::class)
-                                <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><span class="nav-link-icon"><i class="ti ti-shopping-cart"></i></span><span class="nav-link-title">Órdenes de compra</span></a></li>
+                            @can('viewAny', App\Models\Order::class)
+                                <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><span class="nav-link-icon"><i class="ti ti-shopping-cart"></i></span><span class="nav-link-title">Pedidos</span></a></li>
                             @endcan
                             @can('viewAny', App\Models\Client::class)
                                 <li class="nav-item"><a class="nav-link" href="{{ route('clients.index') }}"><span class="nav-link-icon"><i class="ti ti-building"></i></span><span class="nav-link-title">Clientes</span></a></li>
+                            @endcan
+                            @can('viewAny', App\Models\User::class)
+                                <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><span class="nav-link-icon"><i class="ti ti-users"></i></span><span class="nav-link-title">Usuarios</span></a></li>
+                            @endcan
+                            @can('viewAny', Spatie\Permission\Models\Role::class)
+                                <li class="nav-item"><a class="nav-link" href="{{ route('roles.index') }}"><span class="nav-link-icon"><i class="ti ti-lock"></i></span><span class="nav-link-title">Roles</span></a></li>
                             @endcan
                         </ul>
                         <div class="navbar-nav flex-row order-md-last ms-md-auto">

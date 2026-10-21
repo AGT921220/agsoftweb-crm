@@ -1,0 +1,17 @@
+---
+description: Pedidos y entregas
+globs: app/Features/Orders/**/*.php,app/Http/Controllers/OrderController.php,app/Models/Order*.php,resources/views/orders/**/*.blade.php
+alwaysApply: false
+---
+
+# Pedidos
+
+Referencia: `CreateOrder`, `UpdateOrder`, `ChangeOrderStatus`, `RegisterDelivery`, `ConvertQuotationToOrder`.
+
+- Folio `PED-000001`. Un pedido directo nace en borrador. Uno convertido nace en pendiente de confirmación.
+- Cliente y contacto son obligatorios. La copia del contacto no se edita en el formulario.
+- Editable solo en borrador y pendiente de confirmación.
+- Entregas solo en confirmada, en proceso o parcialmente entregada.
+- `quantity_delivered` no puede superar `quantity`. Al cubrir todo, el estado pasa a completada. Si queda pendiente, a parcialmente entregada.
+- Completar a mano exige que no queden cantidades pendientes.
+- Cancelar exige comentario. Un pedido cancelado no recibe entregas.

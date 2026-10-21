@@ -6,22 +6,26 @@
 @endsection
 
 @section('actions')
-    <a class="btn" href="{{ route('quotations.pdf', $quotation) }}">Ver PDF</a>
-    <a class="btn" href="{{ route('quotations.pdf', [$quotation, 'download' => 1]) }}">Descargar PDF</a>
-    @can('create', App\Models\Quotation::class)
+    @can('pdf', $quotation)
+        <a class="btn" href="{{ route('quotations.pdf', $quotation) }}">Ver PDF</a>
+        <a class="btn" href="{{ route('quotations.pdf', [$quotation, 'download' => 1]) }}">Descargar PDF</a>
+    @endcan
+    @can('duplicate', $quotation)
         <form method="POST" action="{{ route('quotations.duplicate', $quotation) }}">@csrf<button class="btn" type="submit">Duplicar</button></form>
     @endcan
     @can('update', $quotation)
         @if ($quotation->status->isEditable())
             <a class="btn btn-primary" href="{{ route('quotations.edit', $quotation) }}">Editar</a>
         @endif
+    @endcan
+    @can('version', $quotation)
         @if ($quotation->status->canVersion())
             <form method="POST" action="{{ route('quotations.versions.store', $quotation) }}">@csrf<button class="btn" type="submit">Nueva versión</button></form>
         @endif
     @endcan
-    @can('create', App\Models\PurchaseOrder::class)
+    @can('convert', $quotation)
         @if ($quotation->status === App\Enums\QuotationStatus::Approved && ! $hasOrder)
-            <form method="POST" action="{{ route('quotations.convert', $quotation) }}">@csrf<button class="btn btn-success" type="submit">Convertir a OC</button></form>
+            <form method="POST" action="{{ route('quotations.convert', $quotation) }}">@csrf<button class="btn btn-success" type="submit">Convertir a pedido</button></form>
         @endif
     @endcan
 @endsection
@@ -43,7 +47,7 @@
                 <div class="row g-3">
                     <div class="col-md-4"><div class="text-secondary">Cliente</div><div>{{ $quotation->client_name }}</div></div>
                     <div class="col-md-4"><div class="text-secondary">Razón social</div><div>{{ $quotation->legal_name }}</div></div>
-                    <div class="col-md-4"><div class="text-secondary">Contacto</div><div>{{ $quotation->contact_name }}</div></div>
+                    <div class="col-md-4"><div class="text-secondary">Contacto</div><div>{{ $quotation->contactName() }}</div></div>
                     <div class="col-md-4"><div class="text-secondary">Correo</div><div>{{ $quotation->email }}</div></div>
                     <div class="col-md-4"><div class="text-secondary">Teléfono</div><div>{{ $quotation->phone }}</div></div>
                     <div class="col-md-4"><div class="text-secondary">Responsable</div><div>{{ $quotation->user->name }}</div></div>
@@ -57,10 +61,11 @@
                     <div class="col-md-6"><div class="text-secondary">Notas para el cliente</div><div>{{ $quotation->client_notes }}</div></div>
                     <div class="col-md-6"><div class="text-secondary">Observaciones internas</div><div>{{ $quotation->internal_notes }}</div></div>
                 </div>
-                @if ($quotation->purchaseOrder)
-                    <div class="mt-3">Orden relacionada: <a href="{{ route('purchase-orders.show', $quotation->purchaseOrder) }}">{{ $quotation->purchaseOrder->folio }}</a></div>
+                @if ($quotation->order)
+                    <div class="mt-3">Pedido relacionado: <a href="{{ route('orders.show', $quotation->order) }}">{{ $quotation->order->folio }}</a></div>
                 @endif
                 @if ($quotation->status->transitions() !== [])
+                    @can('changeStatus', $quotation)
                     <form class="row g-2 mt-3" method="POST" action="{{ route('quotations.status', $quotation) }}">
                         @csrf
                         <div class="col-md-4">
@@ -73,6 +78,7 @@
                         <div class="col-md-5"><input class="form-control" name="comment" placeholder="Comentario o motivo"></div>
                         <div class="col-md-3"><button class="btn btn-primary w-100" type="submit">Cambiar estado</button></div>
                     </form>
+                    @endcan
                 @endif
             </div>
         </div>
@@ -96,7 +102,7 @@
         @endcan
         <div class="tab-pane card" id="files">
             <div class="card-body">
-                @include('partials.attachments', ['attachments' => $quotation->attachments, 'action' => route('quotations.attachments.store', $quotation), 'canUpload' => auth()->user()->can('update', $quotation)])
+                @include('partials.attachments', ['attachments' => $quotation->attachments, 'action' => route('quotations.attachments.store', $quotation), 'canUpload' => auth()->user()->can('attach', $quotation)])
             </div>
         </div>
         <div class="tab-pane card" id="versions">

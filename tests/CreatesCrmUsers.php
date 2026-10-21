@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use App\Enums\Role;
+use App\Models\Client;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 
@@ -23,12 +24,20 @@ trait CreatesCrmUsers
      */
     protected function quotationPayload(User $owner, array $overrides = []): array
     {
-        $payload = [
-            'client_name' => 'Cliente Demo',
+        $client = Client::query()->create([
+            'name' => 'Cliente Demo',
             'legal_name' => 'Cliente Demo SA de CV',
-            'contact_name' => 'Ana López',
-            'email' => 'ana@demo.test',
+        ]);
+        $contact = $client->contacts()->create([
+            'first_name' => 'Ana',
+            'last_name' => 'López',
             'phone' => '5555555555',
+            'email' => 'ana@demo.test',
+        ]);
+
+        $payload = [
+            'client_id' => $client->id,
+            'contact_id' => $contact->id,
             'issued_on' => '2026-10-01',
             'expires_on' => '2026-10-31',
             'user_id' => $owner->id,

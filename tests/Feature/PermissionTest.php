@@ -36,10 +36,10 @@ class PermissionTest extends TestCase
         ])->assertSessionHasErrors('nickname');
     }
 
-    public function test_operations_cannot_approve_quotations_and_sales_cannot_confirm_orders(): void
+    public function test_billing_cannot_approve_quotations_and_sales_cannot_confirm_orders(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
-        $operations = $this->userWithRole(Role::Operations);
+        $sales = $this->userWithRole(Role::Vendedor);
+        $operations = $this->userWithRole(Role::Facturacion);
 
         $this->actingAs($sales)->post(route('quotations.store'), $this->quotationPayload($sales));
         $quotation = Quotation::query()->first();
@@ -53,10 +53,10 @@ class PermissionTest extends TestCase
             ->post(route('quotations.store'), $this->quotationPayload($operations))
             ->assertForbidden();
 
-        $this->actingAs($operations)->post(route('purchase-orders.store'), $this->orderPayload($operations))->assertRedirect();
+        $this->actingAs($operations)->post(route('orders.store'), $this->orderPayload($operations))->assertRedirect();
 
         $this->actingAs($sales)
-            ->post(route('purchase-orders.status', \App\Models\PurchaseOrder::query()->first()), [
+            ->post(route('orders.status', \App\Models\Order::query()->first()), [
                 'status' => 'confirmada',
             ])
             ->assertForbidden();

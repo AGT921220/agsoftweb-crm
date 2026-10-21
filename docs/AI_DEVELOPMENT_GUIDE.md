@@ -23,30 +23,42 @@ Recetas de este repositorio. Las clases citadas son las de referencia.
 
 ## Conversión
 
-`ConvertQuotationToPurchaseOrder` exige estado aprobada, bloquea si otra versión de la cadena ya tiene orden y copia importes guardados, sin recalcular.
+`ConvertQuotationToOrder` exige estado aprobada, bloquea si otra versión de la cadena ya tiene pedido y copia importes guardados, sin recalcular.
 
-## Orden y entrega
+## Cliente y contactos
 
-1. Alta directa: `CreatePurchaseOrder` (borrador).
-2. Estado: `ChangePurchaseOrderStatus`.
+`SaveClient` guarda el cliente y sincroniza la lista `contacts`. No elimina un contacto que ya está en una cotización o un pedido.
+
+## Pedido y entrega
+
+1. Alta directa: `CreateOrder` (borrador).
+2. Estado: `ChangeOrderStatus`.
 3. Entrega: `RegisterDelivery`. Compara la cantidad contra `quantity - quantity_delivered`.
-4. Referencia de prueba: `tests/Feature/PurchaseOrderTest.php`.
+4. Referencia de prueba: `tests/Feature/OrderTest.php`.
 
 ## Permiso nuevo
 
-1. Caso en `App\Enums\Permission`.
-2. Fila en `RolePermissions` y `php artisan db:seed --class=PermissionSeeder`.
-3. Método en la policy.
-4. `authorize()` del FormRequest o `$this->authorize()` en el controlador.
+1. Caso en `App\Enums\Permission`, con `label()` y grupo.
+2. Fila en `RolePermissions` para los roles de sistema que deban traerlo, y `php artisan db:seed --class=PermissionSeeder`.
+3. Método en la policy o `authorize()` del FormRequest. El controlador no decide el permiso por su cuenta si ya lo cubre el request.
+4. El panel de superadmin lista el enum; no inventes un permiso que ninguna acción consulte.
 5. Actualiza `.cursor/rules/04-permissions.mdc` si el mapa cambió.
+
+## Usuarios y roles
+
+1. Usuario: `StoreUserRequest` / `UpdateUserRequest` y `SaveUser`. El rol principal queda en `users.role`.
+2. Rol: `StoreRoleRequest` / `UpdateRoleRequest` y `SaveRole`. Un rol de sistema no cambia de nombre.
+3. `DeleteUser` y `DeleteRole` rechazan borrar al último superadmin o un rol de sistema.
+4. Vistas en `resources/views/users` y `resources/views/roles`. El nav solo muestra el enlace con permiso.
+5. Prueba en `tests/Feature/AccessTest.php`.
 
 ## Listado
 
-`Quotation::filtered()` y `PurchaseOrder::filtered()` aplican búsqueda, filtros y orden. El controlador pagina 15. La vista es una tabla Blade.
+`Quotation::filtered()` y `Order::filtered()` aplican búsqueda, filtros y orden. El controlador pagina 15. La vista es una tabla Blade.
 
 ## PDF
 
-`QuotationController::pdf` y `PurchaseOrderController::pdf`. `?download=1` descarga. Sin ese parámetro, el navegador lo muestra.
+`QuotationController::pdf` y `OrderController::pdf`. `?download=1` descarga. Sin ese parámetro, el navegador lo muestra.
 
 ## Seguimiento
 

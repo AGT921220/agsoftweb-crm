@@ -34,9 +34,11 @@ class Quotation extends Model
         'parent_id',
         'root_id',
         'client_id',
+        'contact_id',
         'client_name',
         'legal_name',
-        'contact_name',
+        'contact_first_name',
+        'contact_last_name',
         'email',
         'phone',
         'issued_on',
@@ -76,6 +78,16 @@ class Quotation extends Model
         return $this->belongsTo(Client::class);
     }
 
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
+    }
+
+    public function contactName(): string
+    {
+        return trim($this->contact_first_name.' '.$this->contact_last_name);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -101,9 +113,9 @@ class Quotation extends Model
         return $this->hasMany(QuotationVersion::class)->orderByDesc('version_number');
     }
 
-    public function purchaseOrder(): HasOne
+    public function order(): HasOne
     {
-        return $this->hasOne(PurchaseOrder::class);
+        return $this->hasOne(Order::class);
     }
 
     public function chain(): Builder
@@ -121,6 +133,8 @@ class Quotation extends Model
                 $query->where('folio', 'like', $like)
                     ->orWhere('client_name', 'like', $like)
                     ->orWhere('legal_name', 'like', $like)
+                    ->orWhere('contact_first_name', 'like', $like)
+                    ->orWhere('contact_last_name', 'like', $like)
                     ->orWhere('email', 'like', $like);
             });
         });

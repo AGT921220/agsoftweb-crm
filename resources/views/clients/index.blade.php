@@ -9,15 +9,13 @@
     <div class="card">
         <div class="table-responsive">
             <table class="table table-vcenter card-table">
-                <thead><tr><th>Nombre</th><th>Razón social</th><th>Contacto</th><th>Correo</th><th>Teléfono</th><th></th></tr></thead>
+                <thead><tr><th>Nombre</th><th>Razón social</th><th>Contactos</th><th></th></tr></thead>
                 <tbody>
                     @forelse ($clients as $client)
                         <tr>
                             <td>{{ $client->name }}</td>
                             <td>{{ $client->legal_name }}</td>
-                            <td>{{ $client->contact_name }}</td>
-                            <td>{{ $client->email }}</td>
-                            <td>{{ $client->phone }}</td>
+                            <td>{{ $client->contacts_count }}</td>
                             <td class="text-end">
                                 @can('update', $client)
                                     <a class="btn btn-sm" href="{{ route('clients.edit', $client) }}">Editar</a>
@@ -25,7 +23,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-secondary">No hay clientes.</td></tr>
+                        <tr><td colspan="4" class="text-secondary">No hay clientes.</td></tr>
                     @endforelse
                 </tbody>
             </table>

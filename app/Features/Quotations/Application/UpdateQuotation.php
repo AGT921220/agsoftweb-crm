@@ -37,7 +37,7 @@ final class UpdateQuotation
             $beforeTotal = (string) $quotation->total;
             $totals = ($this->totals)($data['items']);
 
-            $quotation->fill(array_merge(PartyAttributes::from($data), [
+            $quotation->fill(array_merge(PartyAttributes::capture((int) $data['client_id'], (int) $data['contact_id']), [
                 'issued_on' => $data['issued_on'],
                 'expires_on' => $data['expires_on'],
                 'user_id' => $data['user_id'],

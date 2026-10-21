@@ -132,19 +132,4 @@
         recalculate();
     });
 
-    const clients = JSON.parse(document.getElementById('clients-data')?.textContent || '{}');
-    const clientSelect = document.getElementById('client_id');
-    if (clientSelect) {
-        clientSelect.addEventListener('change', () => {
-            const client = clients[clientSelect.value];
-            if (!client) {
-                return;
-            }
-            document.getElementById('client_name').value = client.name || '';
-            document.getElementById('legal_name').value = client.legal_name || '';
-            document.getElementById('contact_name').value = client.contact_name || '';
-            document.getElementById('email').value = client.email || '';
-            document.getElementById('phone').value = client.phone || '';
-        });
-    }
 })();

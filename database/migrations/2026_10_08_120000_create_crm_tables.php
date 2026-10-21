@@ -14,11 +14,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('legal_name')->nullable();
-            $table->string('contact_name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone', 40)->nullable();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::create('contacts', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('client_id')->constrained()->cascadeOnDelete();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('phone', 40);
+            $table->string('email');
+            $table->timestamps();
         });
 
         Schema::create('folio_sequences', function (Blueprint $table) {
@@ -35,12 +42,14 @@ return new class extends Migration
             $table->unsignedInteger('version_number')->default(1);
             $table->foreignId('parent_id')->nullable()->constrained('quotations')->restrictOnDelete();
             $table->foreignId('root_id')->nullable()->constrained('quotations')->restrictOnDelete();
-            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('client_id')->constrained()->restrictOnDelete();
+            $table->foreignId('contact_id')->constrained()->restrictOnDelete();
             $table->string('client_name');
             $table->string('legal_name')->nullable();
-            $table->string('contact_name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone', 40)->nullable();
+            $table->string('contact_first_name');
+            $table->string('contact_last_name');
+            $table->string('email');
+            $table->string('phone', 40);
             $table->date('issued_on');
             $table->date('expires_on');
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
@@ -69,7 +78,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('quotation_id')->constrained()->cascadeOnDelete();
             $table->string('sku')->nullable();
-            $table->string('description', 1000);
+            $table->text('description');
             $table->decimal('quantity', 15, 4);
             $table->string('unit', 40);
             $table->decimal('unit_price', 15, 4);
@@ -93,19 +102,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('purchase_orders', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('folio')->unique();
             $table->unsignedInteger('sequence_number');
             $table->foreignId('quotation_id')->nullable()->unique()->constrained()->restrictOnDelete();
             $table->unsignedInteger('quotation_version')->nullable();
             $table->string('client_folio')->nullable();
-            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('client_id')->constrained()->restrictOnDelete();
+            $table->foreignId('contact_id')->constrained()->restrictOnDelete();
             $table->string('client_name');
             $table->string('legal_name')->nullable();
-            $table->string('contact_name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone', 40)->nullable();
+            $table->string('contact_first_name');
+            $table->string('contact_last_name');
+            $table->string('email');
+            $table->string('phone', 40);
             $table->date('issued_on');
             $table->date('estimated_delivery_on')->nullable();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
@@ -129,11 +140,11 @@ return new class extends Migration
             $table->index('issued_on');
         });
 
-        Schema::create('purchase_order_items', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->string('sku')->nullable();
-            $table->string('description', 1000);
+            $table->text('description');
             $table->decimal('quantity', 15, 4);
             $table->decimal('quantity_delivered', 15, 4)->default(0);
             $table->string('unit', 40);
@@ -149,19 +160,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('purchase_order_deliveries', function (Blueprint $table) {
+        Schema::create('order_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_order_id')->constrained()->restrictOnDelete();
+            $table->foreignId('order_id')->constrained()->restrictOnDelete();
             $table->date('delivered_on');
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
 
-        Schema::create('purchase_order_delivery_items', function (Blueprint $table) {
+        Schema::create('order_delivery_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_order_delivery_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('purchase_order_item_id')->constrained()->restrictOnDelete();
+            $table->foreignId('order_delivery_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('order_item_id')->constrained()->restrictOnDelete();
             $table->decimal('quantity', 15, 4);
             $table->timestamps();
         });
@@ -207,13 +218,14 @@ return new class extends Migration
         Schema::dropIfExists('attachments');
         Schema::dropIfExists('activity_logs');
         Schema::dropIfExists('follow_ups');
-        Schema::dropIfExists('purchase_order_delivery_items');
-        Schema::dropIfExists('purchase_order_deliveries');
-        Schema::dropIfExists('purchase_order_items');
-        Schema::dropIfExists('purchase_orders');
+        Schema::dropIfExists('order_delivery_items');
+        Schema::dropIfExists('order_deliveries');
+        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('orders');
         Schema::dropIfExists('quotation_versions');
         Schema::dropIfExists('quotation_items');
         Schema::dropIfExists('quotations');
+        Schema::dropIfExists('contacts');
         Schema::dropIfExists('folio_sequences');
         Schema::dropIfExists('clients');
     }

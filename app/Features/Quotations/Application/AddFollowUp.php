@@ -9,7 +9,7 @@ use App\Enums\FollowUpType;
 use App\Exceptions\CrmRuleException;
 use App\Features\Shared\Application\RecordActivity;
 use App\Models\FollowUp;
-use App\Models\PurchaseOrder;
+use App\Models\Order;
 use App\Models\Quotation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -54,8 +54,8 @@ final class AddFollowUp
             throw new CrmRuleException('No se pueden registrar seguimientos en una cotización '.$document->status->label().'.');
         }
 
-        if ($document instanceof PurchaseOrder && ! $document->status->acceptsFollowUps()) {
-            throw new CrmRuleException('No se pueden registrar seguimientos en una orden '.$document->status->label().'.');
+        if ($document instanceof Order && ! $document->status->acceptsFollowUps()) {
+            throw new CrmRuleException('No se pueden registrar seguimientos en un pedido '.$document->status->label().'.');
         }
     }
 }

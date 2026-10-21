@@ -18,7 +18,7 @@
     <p>
         <strong>{{ $quotation->client_name }}</strong><br>
         {{ $quotation->legal_name }}<br>
-        {{ $quotation->contact_name }} · {{ $quotation->email }} · {{ $quotation->phone }}
+        {{ $quotation->contactName() }} · {{ $quotation->email }} · {{ $quotation->phone }}
     </p>
     <p>Fecha: {{ $quotation->issued_on->format('d/m/Y') }} · Vencimiento: {{ $quotation->expires_on->format('d/m/Y') }}<br>
         Responsable: {{ $quotation->user->name }}<br>

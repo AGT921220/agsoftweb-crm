@@ -6,12 +6,13 @@ alwaysApply: false
 
 # Cotizaciones
 
-Referencia: `CreateQuotation`, `UpdateQuotation`, `ChangeQuotationStatus`, `CreateQuotationVersion`, `ConvertQuotationToPurchaseOrder`.
+Referencia: `CreateQuotation`, `UpdateQuotation`, `ChangeQuotationStatus`, `CreateQuotationVersion`, `ConvertQuotationToOrder`.
 
+- Cliente y contacto son obligatorios. La copia del contacto no se edita en el formulario.
 - Folio `COT-000001`. La versión 2 del mismo consecutivo es `COT-000001-V2`.
 - Editable en borrador, enviada, en seguimiento y en negociación.
 - Nueva versión desde enviada, seguimiento, negociación, aprobada o vencida. No si ya hay un borrador en la cadena.
 - Al aprobar y al versionar se guarda `quotation_versions.snapshot`.
-- Conversión solo desde una cotización aprobada, y solo si la cadena no tiene orden.
+- Conversión solo desde una cotización aprobada, y solo si la cadena no tiene pedido. El folio del pedido es `PED-000001`.
 - Cancelar o rechazar exige comentario.
 - `ExpireQuotations` pasa a vencida las enviadas, en seguimiento o en negociación con `expires_on` anterior a hoy.

@@ -6,16 +6,23 @@ namespace App\Enums;
 
 enum Role: string
 {
+    case SuperAdmin = 'superadmin';
     case Admin = 'admin';
-    case Sales = 'sales';
-    case Operations = 'operations';
+    case Vendedor = 'vendedor';
+    case Facturacion = 'facturacion';
 
     public function label(): string
     {
         return match ($this) {
-            self::Admin => 'Administración',
-            self::Sales => 'Ventas',
-            self::Operations => 'Operaciones',
+            self::SuperAdmin => 'Superadmin',
+            self::Admin => 'Admin',
+            self::Vendedor => 'Vendedor',
+            self::Facturacion => 'Facturación',
         };
+    }
+
+    public static function isBuiltIn(string $name): bool
+    {
+        return self::tryFrom($name) !== null;
     }
 }

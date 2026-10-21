@@ -1,16 +1,20 @@
 ---
 description: Roles y policies del CRM
-globs: app/Policies/**/*.php,app/Enums/Permission.php,app/Enums/Role.php,app/Support/RolePermissions.php
+globs: app/Policies/**/*.php,app/Enums/Permission.php,app/Enums/Role.php,app/Support/RolePermissions.php,app/Features/Access/**/*.php,app/Http/Controllers/UserController.php,app/Http/Controllers/RoleController.php,resources/views/users/**/*.blade.php,resources/views/roles/**/*.blade.php
 alwaysApply: false
 ---
 
 # Permisos
 
-- Roles: `admin`, `sales`, `operations` en `users.role` y en Spatie.
-- `RolePermissions` define el mapa. `PermissionSeeder` lo escribe en `spatie/laravel-permission`.
-- Al guardar un usuario, `User` sincroniza el rol de Spatie con `users.role`.
-- La comprobación es `$user->hasPermission()`, que consulta el permiso de Spatie.
-- Aprobar una cotización exige `quotations.approve`. Cancelarla exige `quotations.cancel`.
-- Confirmar, procesar o completar una orden exige `purchase_orders.confirm`. Cancelarla exige `purchase_orders.cancel`.
-- Registrar una entrega exige `purchase_orders.update` (`PurchaseOrderPolicy::deliver`).
-- No agregues un permiso nuevo si el rol ya cubre la acción con uno existente. Si lo agregas, actualiza el enum, `RolePermissions` y vuelve a correr `PermissionSeeder`.
+- Cada acción del CRM tiene un caso en `Permission`. La policy o el FormRequest preguntan con `hasPermission`. No reutilices el permiso de otra acción.
+- Roles de sistema: `superadmin`, `admin`, `vendedor`, `facturacion`. Viven en `users.role` y en Spatie. El panel puede crear roles extra; el nombre queda en `users.role` como texto.
+- `RolePermissions` es el mapa inicial. `PermissionSeeder` lo vuelve a escribir solo en esos cuatro roles. No borra roles creados en el panel.
+- `users.role` es el rol principal, de sistema o creado en el panel. Al guardar, `User` sincroniza ese único rol de Spatie. No borra los permisos directos: esos los asigna `SaveUser`.
+- Superadmin pasa `Gate::before` y `hasPermission` siempre. Admin tiene todas las acciones de negocio y no tiene `users.*` ni `roles.*`.
+- El seeder crea el nickname `superadmin` con la misma contraseña que `admin` si no existe, y no reescribe una contraseña ya guardada.
+- Aprobar, rechazar y cancelar una cotización usan `quotations.approve`, `quotations.reject` y `quotations.cancel`. El resto de estados usa `quotations.update`.
+- Confirmar, procesar o completar un pedido exige `orders.confirm`. Cancelarlo exige `orders.cancel`. El resto de estados usa `orders.update`.
+- Registrar una entrega exige `orders.deliver`. El seguimiento del pedido exige `orders.follow_up`.
+- PDF, duplicar, versionar, convertir y adjuntar tienen permiso propio. Descargar un adjunto exige ver el documento.
+- El panel está en `/users` y `/roles`. No elimines un rol de sistema ni al último superadmin.
+- Si agregas un permiso, actualiza el enum, `RolePermissions`, la policy y vuelve a correr `PermissionSeeder`.

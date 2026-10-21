@@ -1,6 +1,6 @@
 # Agsoftweb CRM
 
-CRM de cotizaciones y órdenes de compra. Laravel 13, Blade y Tabler.
+CRM de cotizaciones y pedidos. Laravel 13, Blade y Tabler.
 
 ## Requisitos
 
@@ -16,7 +16,7 @@ docker compose exec php php artisan migrate --seed
 
 La aplicación queda en el puerto `PORT_NGINX` (8090 si no lo cambias). phpMyAdmin usa `PORT_PHPMYADMIN` (8091). MySQL en el host usa `PORT_MYSQL` (4310) y Redis `PORT_REDIS` (6379).
 
-El acceso es por nickname. El seeder deja el usuario `admin` con contraseña `admin`, y esa misma contraseña en el resto de usuarios.
+El acceso es por nickname. El seeder crea `admin` y `superadmin` con contraseña `admin` si aún no existen. El dueño entra con `superadmin`. No reescribe una contraseña ya guardada.
 
 Horizon atiende la cola y el contenedor `scheduler` ejecuta el programador, incluido el vencimiento diario de cotizaciones.
 

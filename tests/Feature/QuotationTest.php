@@ -22,16 +22,14 @@ class QuotationTest extends TestCase
 
     public function test_creates_quotation_with_totals_and_unique_folio(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
+        $sales = $this->userWithRole(Role::Vendedor);
 
         $this->actingAs($sales)
             ->post(route('quotations.store'), $this->quotationPayload($sales))
             ->assertRedirect();
 
         $this->actingAs($sales)
-            ->post(route('quotations.store'), $this->quotationPayload($sales, [
-                'client_name' => 'Otro cliente',
-            ]))
+            ->post(route('quotations.store'), $this->quotationPayload($sales))
             ->assertRedirect();
 
         $first = Quotation::query()->where('folio', 'COT-000001')->first();
@@ -53,7 +51,7 @@ class QuotationTest extends TestCase
 
     public function test_rejects_discount_above_the_line_amount(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
+        $sales = $this->userWithRole(Role::Vendedor);
         $payload = $this->quotationPayload($sales, [
             'items' => [[
                 'description' => 'Servicio',
@@ -77,7 +75,7 @@ class QuotationTest extends TestCase
 
     public function test_status_transitions_follow_ups_versions_and_history(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
+        $sales = $this->userWithRole(Role::Vendedor);
         $this->actingAs($sales)->post(route('quotations.store'), $this->quotationPayload($sales));
         $quotation = Quotation::query()->first();
 
@@ -147,16 +145,16 @@ class QuotationTest extends TestCase
 
     public function test_converts_an_approved_quotation_once(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
+        $sales = $this->userWithRole(Role::Vendedor);
         $quotation = $this->approvedQuotation($sales);
 
         $this->actingAs($sales)
             ->post(route('quotations.convert', $quotation))
             ->assertRedirect();
 
-        $order = $quotation->fresh()->purchaseOrder;
+        $order = $quotation->fresh()->order;
         $this->assertNotNull($order);
-        $this->assertSame('OC-000001', $order->folio);
+        $this->assertSame('PED-000001', $order->folio);
         $this->assertSame((string) $quotation->fresh()->total, (string) $order->total);
         $this->assertSame($quotation->id, $order->quotation_id);
         $this->assertSame($sales->id, $order->converted_by);
@@ -165,12 +163,12 @@ class QuotationTest extends TestCase
             ->from(route('quotations.show', $quotation))
             ->post(route('quotations.convert', $quotation))
             ->assertSessionHas('error');
-        $this->assertSame(1, $quotation->purchaseOrder()->count());
+        $this->assertSame(1, $quotation->order()->count());
     }
 
     public function test_expires_sent_quotations_past_their_date(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
+        $sales = $this->userWithRole(Role::Vendedor);
         $this->actingAs($sales)->post(route('quotations.store'), $this->quotationPayload($sales, [
             'issued_on' => '2026-09-01',
             'expires_on' => '2026-09-15',
@@ -190,7 +188,7 @@ class QuotationTest extends TestCase
 
     public function test_sales_can_download_the_pdf(): void
     {
-        $sales = $this->userWithRole(Role::Sales);
+        $sales = $this->userWithRole(Role::Vendedor);
         $this->actingAs($sales)->post(route('quotations.store'), $this->quotationPayload($sales));
         $quotation = Quotation::query()->first();
 

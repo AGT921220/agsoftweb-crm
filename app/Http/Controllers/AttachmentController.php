@@ -23,7 +23,7 @@ class AttachmentController extends Controller
     public function destroy(Attachment $attachment, RecordActivity $activity): RedirectResponse
     {
         $parent = $attachment->attachable;
-        $this->authorize('update', $parent);
+        $this->authorize('attach', $parent);
         $name = $attachment->original_name;
         Storage::disk($attachment->disk)->delete($attachment->path);
         $attachment->delete();

@@ -1,5 +1,5 @@
 ---
-description: Procedimiento y límites del CRM de cotizaciones y órdenes de compra
+description: Procedimiento y límites del CRM de cotizaciones y pedidos
 alwaysApply: true
 ---
 
@@ -9,7 +9,7 @@ El repositorio es la fuente de verdad. El código que cumple estas reglas gana s
 
 ## Antes de implementar
 
-1. Identifica el módulo: cotizaciones, órdenes de compra, dashboard o clientes.
+1. Identifica el módulo: cotizaciones, pedidos, dashboard, clientes o accesos.
 2. Lee la regla de ese módulo en `.cursor/rules`.
 3. Busca el caso de uso equivalente en `app/Features` antes de crear uno nuevo.
 4. Cambio mínimo. Sin columnas ni estados inventados.

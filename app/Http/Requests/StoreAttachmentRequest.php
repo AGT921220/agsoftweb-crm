@@ -10,9 +10,9 @@ class StoreAttachmentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $parent = $this->route('quotation') ?? $this->route('purchase_order');
+        $parent = $this->route('quotation') ?? $this->route('order');
 
-        return $parent && $this->user()->can('update', $parent);
+        return $parent && $this->user()->can('attach', $parent);
     }
 
     /**

@@ -32,7 +32,6 @@
     </div>
 </div>
 <script type="application/json" id="line-items-data">@json($items ?? [])</script>
-<script type="application/json" id="clients-data">@json($clientsJson ?? new stdClass)</script>
 @push('scripts')
     <script src="{{ asset('js/line-items.js') }}"></script>
 @endpush

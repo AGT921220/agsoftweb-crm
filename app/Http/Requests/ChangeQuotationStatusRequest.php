@@ -27,6 +27,10 @@ class ChangeQuotationStatusRequest extends FormRequest
             return $user->hasPermission(Permission::QuotationsApprove);
         }
 
+        if ($status === QuotationStatus::Rejected) {
+            return $user->hasPermission(Permission::QuotationsReject);
+        }
+
         if ($status === QuotationStatus::Cancelled) {
             return $user->hasPermission(Permission::QuotationsCancel);
         }

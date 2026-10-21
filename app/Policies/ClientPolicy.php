@@ -12,29 +12,26 @@ class ClientPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission(Permission::QuotationsView)
-            || $user->hasPermission(Permission::PurchaseOrdersView);
+        return $user->hasPermission(Permission::ClientsView);
     }
 
     public function view(User $user, Client $client): bool
     {
-        return $this->viewAny($user);
+        return $user->hasPermission(Permission::ClientsView);
     }
 
     public function create(User $user): bool
     {
-        return $user->hasPermission(Permission::QuotationsCreate)
-            || $user->hasPermission(Permission::PurchaseOrdersCreate);
+        return $user->hasPermission(Permission::ClientsCreate);
     }
 
     public function update(User $user, Client $client): bool
     {
-        return $this->create($user);
+        return $user->hasPermission(Permission::ClientsUpdate);
     }
 
     public function delete(User $user, Client $client): bool
     {
-        return $user->hasPermission(Permission::QuotationsUpdate)
-            || $user->hasPermission(Permission::PurchaseOrdersUpdate);
+        return $user->hasPermission(Permission::ClientsDelete);
     }
 }

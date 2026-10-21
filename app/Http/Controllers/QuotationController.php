@@ -8,7 +8,7 @@ use App\Enums\Currency;
 use App\Enums\QuotationStatus;
 use App\Features\Quotations\Application\AddFollowUp;
 use App\Features\Quotations\Application\ChangeQuotationStatus;
-use App\Features\Quotations\Application\ConvertQuotationToPurchaseOrder;
+use App\Features\Quotations\Application\ConvertQuotationToOrder;
 use App\Features\Quotations\Application\CreateQuotation;
 use App\Features\Quotations\Application\CreateQuotationVersion;
 use App\Features\Quotations\Application\DuplicateQuotation;
@@ -63,13 +63,13 @@ class QuotationController extends Controller
     public function show(Quotation $quotation): View
     {
         $this->authorize('view', $quotation);
-        $quotation->load(['items', 'user', 'client', 'followUps.user', 'activities.user', 'attachments.user', 'purchaseOrder']);
-        $chain = $quotation->chain()->with(['purchaseOrder', 'versions.user'])->orderBy('version_number')->get();
+        $quotation->load(['items', 'user', 'client', 'followUps.user', 'activities.user', 'attachments.user', 'order']);
+        $chain = $quotation->chain()->with(['order', 'versions.user'])->orderBy('version_number')->get();
 
         return view('quotations.show', [
             'quotation' => $quotation,
             'chain' => $chain,
-            'hasOrder' => $chain->contains(fn (Quotation $item) => $item->purchaseOrder !== null),
+            'hasOrder' => $chain->contains(fn (Quotation $item) => $item->order !== null),
             'users' => User::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
@@ -91,7 +91,7 @@ class QuotationController extends Controller
 
     public function duplicate(Quotation $quotation, DuplicateQuotation $duplicate): RedirectResponse
     {
-        $this->authorize('create', Quotation::class);
+        $this->authorize('duplicate', $quotation);
         $copy = $duplicate($quotation, request()->user());
 
         return redirect()->route('quotations.show', $copy)->with('success', 'Se creó el duplicado '.$copy->folio.'.');
@@ -111,19 +111,18 @@ class QuotationController extends Controller
 
     public function version(Quotation $quotation, CreateQuotationVersion $createVersion): RedirectResponse
     {
-        $this->authorize('update', $quotation);
+        $this->authorize('version', $quotation);
         $copy = $createVersion($quotation, request()->user());
 
         return redirect()->route('quotations.show', $copy)->with('success', 'Versión '.$copy->folio.' creada.');
     }
 
-    public function convert(Quotation $quotation, ConvertQuotationToPurchaseOrder $convert): RedirectResponse
+    public function convert(Quotation $quotation, ConvertQuotationToOrder $convert): RedirectResponse
     {
-        $this->authorize('view', $quotation);
-        $this->authorize('create', \App\Models\PurchaseOrder::class);
+        $this->authorize('convert', $quotation);
         $order = $convert($quotation, request()->user());
 
-        return redirect()->route('purchase-orders.show', $order)->with('success', 'Orden '.$order->folio.' generada.');
+        return redirect()->route('orders.show', $order)->with('success', 'Pedido '.$order->folio.' generado.');
     }
 
     public function followUp(StoreFollowUpRequest $request, Quotation $quotation, AddFollowUp $addFollowUp): RedirectResponse
@@ -136,7 +135,7 @@ class QuotationController extends Controller
 
     public function attachment(StoreAttachmentRequest $request, Quotation $quotation, StoreAttachment $store): RedirectResponse
     {
-        $this->authorize('update', $quotation);
+        $this->authorize('attach', $quotation);
         $store($quotation, $request->file('file'), $request->user());
 
         return back()->with('success', 'Documento adjunto guardado.');
@@ -144,7 +143,7 @@ class QuotationController extends Controller
 
     public function pdf(Request $request, Quotation $quotation): Response
     {
-        $this->authorize('view', $quotation);
+        $this->authorize('pdf', $quotation);
         $quotation->load(['items', 'user']);
         $pdf = Pdf::loadView('quotations.pdf', ['quotation' => $quotation])->setPaper('letter');
 
@@ -161,7 +160,7 @@ class QuotationController extends Controller
     private function formData(): array
     {
         return [
-            'clients' => Client::query()->orderBy('name')->get(),
+            'clients' => Client::query()->with('contacts')->orderBy('name')->get(),
             'users' => User::query()->orderBy('name')->get(['id', 'name']),
             'currencies' => Currency::cases(),
         ];
